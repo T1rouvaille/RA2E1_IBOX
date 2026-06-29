@@ -1,0 +1,14 @@
+# Build outputs
+Debug/
+build/
+
+# IDE cache
+.cache/
+
+# Debug logs and configs
+JLinkLog.log
+*.jlink
+*.launch
+
+# API temp
+.api_xml
