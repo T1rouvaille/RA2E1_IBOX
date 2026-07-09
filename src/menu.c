@@ -47,7 +47,7 @@ struct boot_rsp {
 /* ------------------------------------------------------------------ */
 /*  Constants                                                           */
 /* ------------------------------------------------------------------ */
-#define RX_TIMEOUT_MS       245U
+#define RX_TIMEOUT_MS       200000U
 #define NAK                 0x15U
 
 /* Module ID — Honcho PR3 format (8 bytes × 2) */
@@ -67,6 +67,7 @@ static uint8_t  g_addr_high     = 0U;
 static uint8_t  g_addr_low      = 0U;
 static uint8_t  g_FEE_Buffer[FEE_SIZE];
 static uint8_t  g_read_eeprom   = 0U;
+static bool     g_timer_enabled = true;   /* 对齐 abs: 握手后关定时器 */
 
 /* ------------------------------------------------------------------ */
 /*  Forward declarations                                                */
@@ -163,9 +164,8 @@ void menu(void)
 
         if (err != FSP_SUCCESS)
         {
-            /* Timeout: try to boot existing APP if valid */
+            /* Timeout: jump to APP (same as abs_bootloader) */
             try_boot();
-            comms_send((uint8_t *)"[BL] No valid APP, waiting...\r\n", 31U);
             continue;
         }
 
@@ -206,6 +206,10 @@ static void cmd_handshake(void)
     {
         g_read_eeprom = 1U;  /* Trigger EEPROM read on next loop */
     }
+
+    /* Stop timer — subsequent operations never timeout (same as abs_bootloader) */
+    g_timer_enabled = false;
+    g_timer0.p_api->stop(g_timer0.p_ctrl);
 }
 
 /*
@@ -245,16 +249,18 @@ static void cmd_set_address(void)
     if (recv_byte(&ah) != FSP_SUCCESS) { send_nak(); return; }
     if (recv_byte(&al) != FSP_SUCCESS) { send_nak(); return; }
 
+    uint8_t etx = ETX;
+    comms_send(&etx, 1U);
+
     g_addr_high = ah;
     g_addr_low  = al;
     g_target_offset = ((uint32_t)ah << 8U) | (uint32_t)al;
-    g_target_addr   = APP_IMAGE_START_ADDRESS + g_target_offset;
+    g_target_addr   = g_target_offset;  // 绝对地址
 
-    /* 3) 发 ETX */
+/*     3) 发 ETX
     {
-        uint8_t etx = ETX;
-        comms_send(&etx, 1U);
-    }
+
+    }*/
 }
 
 /*
@@ -269,23 +275,27 @@ static void cmd_read_flash(void)
 {
     if (g_target_offset == VERSION_REQUEST_OFFSET)
     {
+
         /* addr = 0xFFFF → 版本信息 */
         cmd_read_version_info();
         g_target_offset = 0U;
-        g_target_addr = APP_IMAGE_START_ADDRESS;
+        g_target_addr =  0x00000000;
     }
     else if (g_target_offset == CALIBRATION_REQUEST_OFFSET)
     {
         /* addr = 0xFFFE → 校准响应 */
         cmd_calibration();
         g_target_offset = 0U;
-        g_target_addr = APP_IMAGE_START_ADDRESS;
+        g_target_addr =  0x00000000;
     }
     else
     {
         /* 其他地址 → 读取 Flash 内容 (从 g_target_addr 开始, 512 字节) */
         static uint8_t rsp[PAGE_SIZE + 4];
         uint16_t i;
+
+        /* LED 指示: 读 Flash 期间点亮 */
+        LED1_ON; LED2_ON; LED3_ON;
 
         rsp[0] = COMMAND_READ_FLASH;
         rsp[1] = (uint8_t)(PAGE_SIZE >> 8U);
@@ -300,9 +310,15 @@ static void cmd_read_flash(void)
         rsp[3U + PAGE_SIZE] = ETX;
 
         comms_send(rsp, sizeof(rsp));
+
+        /* 成功: LED 保持点亮 */
+
         g_target_offset = 0U;
-        g_target_addr = APP_IMAGE_START_ADDRESS;
+        g_target_addr =  0x00000000;
     }
+
+    /* 切回低速波特率 (与 abs_bootloader 的 Read_Flash_Page 一致) */
+    comms_set_baud(UART_BAUD_SLOW);
 }
 
 /*
@@ -463,6 +479,9 @@ static void cmd_load_eeprom(void)
     uint16_t checksum;
     uint8_t  Protected_Page_Data[PROTECTED_PAGE_SIZE_0];
 
+    uint8_t etx = COMMAND_LOAD_EEPROM;
+    comms_send(&etx, 1U);
+
     if (recv_byte(&nh) != FSP_SUCCESS) { send_nak(); return; }
     if (recv_byte(&nl) != FSP_SUCCESS) { send_nak(); return; }
     n = (uint16_t)(((uint16_t)nh << 8U) | (uint16_t)nl);
@@ -497,27 +516,30 @@ static void cmd_load_eeprom(void)
         }
     }
 
-    if (recv_byte(&ch_rx) != FSP_SUCCESS) { send_nak(); return; }
-    if (recv_byte(&cl_rx) != FSP_SUCCESS) { send_nak(); return; }
+/*    if (recv_byte(&ch_rx) != FSP_SUCCESS) { send_nak(); return; }
+    if (recv_byte(&cl_rx) != FSP_SUCCESS) { send_nak(); return; }*/
 
-    if ((uint8_t)(checksum >> 8U) != ch_rx || (uint8_t)(checksum & 0xFFU) != cl_rx)
+/*    if ((uint8_t)(checksum >> 8U) != ch_rx || (uint8_t)(checksum & 0xFFU) != cl_rx)
     {
         send_nak();
         return;
-    }
+    }*/
 
     /* Write to EEPROM (Flash emulation) */
     FEE_Write();
 
     /* Send response */
-    uint8_t rsp[6];
-    rsp[0] = COMMAND_LOAD_EEPROM;
+    uint8_t rsp[3];
+/*    rsp[0] = COMMAND_LOAD_EEPROM;
     rsp[1] = nh;
-    rsp[2] = nl;
-    rsp[3] = (uint8_t)(checksum >> 8U);
-    rsp[4] = (uint8_t)(checksum & 0xFFU);
-    rsp[5] = ETX;
+    rsp[2] = nl;*/
+    rsp[0] = (uint8_t)(checksum >> 8U);
+    rsp[1] = (uint8_t)(checksum & 0xFFU);
+    rsp[2] = ETX;
     comms_send(rsp, sizeof(rsp));
+
+    /* 切回低速波特率 (与 abs_bootloader 的 SET_BAUD 一致) */
+    //comms_set_baud(UART_BAUD_SLOW);
 }
 
 /*
@@ -533,10 +555,11 @@ static void cmd_load_flash(void)
 {
     uint8_t  nh, nl;
     uint8_t  buf[PAGE_SIZE];
-    uint8_t  ch_rx, cl_rx;
     uint16_t n, i;
-    uint16_t checksum;
     fsp_err_t err;
+
+    uint8_t etx = 0X4D;
+    comms_send(&etx, 1U);
 
     if (recv_byte(&nh) != FSP_SUCCESS) { send_nak(); return; }
     if (recv_byte(&nl) != FSP_SUCCESS) { send_nak(); return; }
@@ -550,18 +573,6 @@ static void cmd_load_flash(void)
         if (recv_byte(&buf[i]) != FSP_SUCCESS) { send_nak(); return; }
     }
 
-    /* Receive checksum */
-    if (recv_byte(&ch_rx) != FSP_SUCCESS) { send_nak(); return; }
-    if (recv_byte(&cl_rx) != FSP_SUCCESS) { send_nak(); return; }
-
-    /* Verify checksum */
-    checksum = checksum16(buf, n);
-    if ((uint8_t)(checksum >> 8U) != ch_rx || (uint8_t)(checksum & 0xFFU) != cl_rx)
-    {
-        send_nak();
-        return;
-    }
-
     /* Validate address range */
     if (!addr_in_app_range(g_target_addr, n))
     {
@@ -569,28 +580,39 @@ static void cmd_load_flash(void)
         return;
     }
 
+    /* LED2 指示: 烧录 Flash 期间点亮 */
+    LED2_ON;
+
     /* Erase 2KB block if entering new block */
     err = erase_block_if_needed(g_target_addr);
-    if (err != FSP_SUCCESS) { send_nak(); return; }
+    if (err != FSP_SUCCESS) { LED2_OFF; send_nak(); return; }
 
     /* Write page to flash */
     ThreadsAndInterrupts(DISABLE);
     err = g_flash0.p_api->write(g_flash0.p_ctrl, (uint32_t)buf, g_target_addr, n);
     ThreadsAndInterrupts(RE_ENABLE);
 
-    if (err != FSP_SUCCESS) { send_nak(); return; }
+    if (err != FSP_SUCCESS) { LED2_OFF; send_nak(); return; }
+
+    /* 成功: LED2 保持点亮 */
 
     g_target_addr += n;
 
-    /* Send response */
-    uint8_t rsp[6];
-    rsp[0] = COMMAND_LOAD_FLASH;
-    rsp[1] = 0x00U;
-    rsp[2] = 0x02U;
-    rsp[3] = (uint8_t)(checksum >> 8U);
-    rsp[4] = (uint8_t)(checksum & 0xFFU);
-    rsp[5] = ETX;
-    comms_send(rsp, 6U);
+    /* Send response: M + 00 + 02 + checksum + ETX */
+    {
+        uint16_t checksum = checksum16(buf, n);
+        uint8_t rsp[3];
+        //rsp[0] = COMMAND_LOAD_FLASH;
+/*        rsp[1] = 0x00U;
+        rsp[2] = 0x02U;*/
+        rsp[0] = (uint8_t)(checksum >> 8U);
+        rsp[1] = (uint8_t)(checksum & 0xFFU);
+        rsp[2] = ETX;
+        comms_send(rsp, 3U);
+    }
+
+    /* 切回低速波特率 (与 abs_bootloader 的 SET_BAUD 一致) */
+    comms_set_baud(UART_BAUD_SLOW);
 }
 
 
@@ -620,35 +642,8 @@ static void cmd_change_baud(void)
 static void try_boot(void)
 {
     struct boot_rsp rsp;
-    uint32_t flag       = *(uint32_t *)OTA_FLAG_END_ADDRESS;
-    uint16_t crc_flash  = calcrc(APP_IMAGE_START_ADDRESS,
-                                 (int)(CRC_ADDRESS - APP_IMAGE_START_ADDRESS));
-    uint16_t crc_stored = (uint16_t)(*(uint32_t *)CRC_ADDRESS);
-
-    /* Build debug string without snprintf:
-     * "[BL] flag=0x???????? crc_f=0x???? crc_s=0x????\r\n"  (48 bytes max) */
-    uint8_t dbg[56];
-    uint8_t *p = dbg;
-    p = put_str(p, "[BL] flag=0x");
-    p = put_hex32(p, flag);
-    p = put_str(p, " crc_f=0x");
-    p = put_hex16(p, crc_flash);
-    p = put_str(p, " crc_s=0x");
-    p = put_hex16(p, crc_stored);
-    p = put_str(p, "\r\n");
-    comms_send(dbg, (uint32_t)(p - dbg));
-
-    if (flag == 0x55555555UL)
-    {
-        /* OTA flag set — boot directly */
-        do_boot(&rsp);
-    }
-    else if (flag == 0xFFFFFFFFUL && crc_flash == crc_stored)
-    {
-        /* No OTA flag but CRC matches — boot existing image */
-        do_boot(&rsp);
-    }
-    /* Otherwise: no valid image, return to menu */
+    /* Jump to APP unconditionally (same as abs_bootloader) */
+    do_boot(&rsp);
 }
 
 /* ================================================================== */
@@ -832,7 +827,14 @@ static void send_nak(void)
 static fsp_err_t recv_byte(uint8_t *out)
 {
     uint32_t len = 1U;
-    return comms_read(out, &len, RX_TIMEOUT_MS);
+    if (g_timer_enabled)
+    {
+        return comms_read(out, &len, RX_TIMEOUT_MS);
+    }
+    else
+    {
+        return comms_read_blocking(out, &len);
+    }
 }
 
 static uint16_t checksum16(const uint8_t *buf, uint16_t len)

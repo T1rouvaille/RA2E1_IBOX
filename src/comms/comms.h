@@ -27,6 +27,7 @@
 /* Function prototypes */
 void comms_send(uint8_t * p_src, uint32_t len);
 fsp_err_t comms_read(uint8_t * p_dest, uint32_t * len, uint32_t timeout_milliseconds);
+fsp_err_t comms_read_blocking(uint8_t * p_dest, uint32_t * len);
 fsp_err_t comms_set_baud(uint32_t rate);
 
 #endif /* COMMS_H_ */

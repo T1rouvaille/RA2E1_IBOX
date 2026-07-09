@@ -7,6 +7,15 @@
 #ifndef HEADER_H_
 #define HEADER_H_
 
+
+/* LED OFF (低电平有效) */
+#define LED1_ON    R_IOPORT_PinWrite(&g_ioport_ctrl, BSP_IO_PORT_02_PIN_06, BSP_IO_LEVEL_LOW)
+#define LED2_ON    R_IOPORT_PinWrite(&g_ioport_ctrl, BSP_IO_PORT_02_PIN_07, BSP_IO_LEVEL_LOW)
+#define LED3_ON    R_IOPORT_PinWrite(&g_ioport_ctrl, BSP_IO_PORT_09_PIN_15, BSP_IO_LEVEL_LOW)
+/* LED ON (高电平有效) */
+#define LED1_OFF   R_IOPORT_PinWrite(&g_ioport_ctrl, BSP_IO_PORT_02_PIN_06, BSP_IO_LEVEL_HIGH)
+#define LED2_OFF   R_IOPORT_PinWrite(&g_ioport_ctrl, BSP_IO_PORT_02_PIN_07, BSP_IO_LEVEL_HIGH)
+#define LED3_OFF   R_IOPORT_PinWrite(&g_ioport_ctrl, BSP_IO_PORT_09_PIN_15, BSP_IO_LEVEL_HIGH)
 #define portMAX_DELAY              5000       //5 seconds time out for receiving command from PC
 
 /* Flash memory configuration */

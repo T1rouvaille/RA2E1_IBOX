@@ -102,6 +102,24 @@ fsp_err_t comms_read(uint8_t *p_dest, uint32_t *len, uint32_t timeout_millisecon
 }
 
 /*
+ * comms_read_blocking — 永久阻塞式接收 (无超时, 对齐 abs_bootloader 行为).
+ */
+fsp_err_t comms_read_blocking(uint8_t *p_dest, uint32_t *len)
+{
+    fsp_err_t err;
+
+    g_rx_complete = false;
+    err = g_uart0.p_api->read(g_uart0.p_ctrl, p_dest, *len);
+    if (FSP_SUCCESS != err) return err;
+
+    while (!g_rx_complete)
+    {
+        __NOP();
+    }
+    return FSP_SUCCESS;
+}
+
+/*
  * comms_set_baud — 运行时修改波特率.
  */
 fsp_err_t comms_set_baud(uint32_t rate)
