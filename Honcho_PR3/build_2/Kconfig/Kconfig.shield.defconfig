@@ -1,0 +1,4 @@
+osource "c:/poweredjack/pj_unit/boards/shields/*/Kconfig.defconfig"
+osource "c:/poweredjack/pj_unit_peripheral/boards/shields/*/Kconfig.defconfig"
+osource "c:/firmwareproject/honcho_pr3/boards/shields/*/Kconfig.defconfig"
+osource "C:/ncs/v2.0.0/nrf/boards/shields/*/Kconfig.defconfig"

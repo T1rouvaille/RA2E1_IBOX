@@ -1,0 +1,102 @@
+Dependencies for Project 'ABS_Bootloader', Target 'CMS32M5536_Boot': (DO NOT MODIFY !)
+F (.\2_User\main.c)(0x6527670D)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0 -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-3 -Oz -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -I ./2_User -I ./1_Device -I ./3_driver -I ../ABS_Bootloader-I./RTE/_CMS32M5536_Boot-IC:/Keil_v5/ARM/PACK/Cmsemicon/CMS32-Series/1.0.3/Device/CMS32M55xx/Include-IC:/Keil_v5/ARM/CMSIS/Include-D__UVISION_VERSION="525" -DCMS32M55xx-o ./objects/main.o -MD)
+I (2_User\main.h)(0x65274A46)
+I (1_Device\cms32m5xxx.h)(0x630431DA)
+I (1_Device\core_cm0.h)(0x627370B9)
+I (C:\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x5AA6413A)
+I (1_Device\core_cmInstr.h)(0x625E2D81)
+I (1_Device\CMSIS_armcc_V6.h)(0x625E2D81)
+I (1_Device\core_cmFunc.h)(0x625E2D81)
+I (1_Device\system_cms32m5xxx.h)(0x625E2D81)
+I (2_User\code_config.h)(0x6502D083)
+I (C:\Keil_v5\ARM\ARMCLANG\include\stdlib.h)(0x5AA6413A)
+I (C:\Keil_v5\ARM\ARMCLANG\include\stdbool.h)(0x5AA6413A)
+I (3_driver\gpio.h)(0x63328BD3)
+I (3_driver\system.h)(0x63328BD3)
+I (3_driver\uart.h)(0x630431DA)
+I (3_driver\timer.h)(0x63328BD3)
+I (2_User\mcu_config.h)(0x63328C05)
+I (2_User\cm_handler.h)(0x65274A46)
+I (2_User\user_fmc.h)(0x630431DA)
+F (.\2_User\mcu_config.c)(0x63328C05)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0 -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-3 -Oz -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -I ./2_User -I ./1_Device -I ./3_driver -I ../ABS_Bootloader-I./RTE/_CMS32M5536_Boot-IC:/Keil_v5/ARM/PACK/Cmsemicon/CMS32-Series/1.0.3/Device/CMS32M55xx/Include-IC:/Keil_v5/ARM/CMSIS/Include-D__UVISION_VERSION="525" -DCMS32M55xx-o ./objects/mcu_config.o -MD)
+I (2_User\main.h)(0x65274A46)
+I (1_Device\cms32m5xxx.h)(0x630431DA)
+I (1_Device\core_cm0.h)(0x627370B9)
+I (C:\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x5AA6413A)
+I (1_Device\core_cmInstr.h)(0x625E2D81)
+I (1_Device\CMSIS_armcc_V6.h)(0x625E2D81)
+I (1_Device\core_cmFunc.h)(0x625E2D81)
+I (1_Device\system_cms32m5xxx.h)(0x625E2D81)
+I (2_User\code_config.h)(0x6502D083)
+I (C:\Keil_v5\ARM\ARMCLANG\include\stdlib.h)(0x5AA6413A)
+I (C:\Keil_v5\ARM\ARMCLANG\include\stdbool.h)(0x5AA6413A)
+I (3_driver\gpio.h)(0x63328BD3)
+I (3_driver\system.h)(0x63328BD3)
+I (3_driver\uart.h)(0x630431DA)
+I (3_driver\timer.h)(0x63328BD3)
+I (2_User\mcu_config.h)(0x63328C05)
+I (2_User\cm_handler.h)(0x65274A46)
+I (2_User\user_fmc.h)(0x630431DA)
+F (.\2_User\cm_handler.c)(0x65274A46)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0 -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-3 -Oz -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -I ./2_User -I ./1_Device -I ./3_driver -I ../ABS_Bootloader-I./RTE/_CMS32M5536_Boot-IC:/Keil_v5/ARM/PACK/Cmsemicon/CMS32-Series/1.0.3/Device/CMS32M55xx/Include-IC:/Keil_v5/ARM/CMSIS/Include-D__UVISION_VERSION="525" -DCMS32M55xx-o ./objects/cm_handler.o -MD)
+I (2_User\main.h)(0x65274A46)
+I (1_Device\cms32m5xxx.h)(0x630431DA)
+I (1_Device\core_cm0.h)(0x627370B9)
+I (C:\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x5AA6413A)
+I (1_Device\core_cmInstr.h)(0x625E2D81)
+I (1_Device\CMSIS_armcc_V6.h)(0x625E2D81)
+I (1_Device\core_cmFunc.h)(0x625E2D81)
+I (1_Device\system_cms32m5xxx.h)(0x625E2D81)
+I (2_User\code_config.h)(0x6502D083)
+I (C:\Keil_v5\ARM\ARMCLANG\include\stdlib.h)(0x5AA6413A)
+I (C:\Keil_v5\ARM\ARMCLANG\include\stdbool.h)(0x5AA6413A)
+I (3_driver\gpio.h)(0x63328BD3)
+I (3_driver\system.h)(0x63328BD3)
+I (3_driver\uart.h)(0x630431DA)
+I (3_driver\timer.h)(0x63328BD3)
+I (2_User\mcu_config.h)(0x63328C05)
+I (2_User\cm_handler.h)(0x65274A46)
+I (2_User\user_fmc.h)(0x630431DA)
+F (.\2_User\user_fmc.c)(0x630431DA)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0 -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-3 -Oz -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -I ./2_User -I ./1_Device -I ./3_driver -I ../ABS_Bootloader-I./RTE/_CMS32M5536_Boot-IC:/Keil_v5/ARM/PACK/Cmsemicon/CMS32-Series/1.0.3/Device/CMS32M55xx/Include-IC:/Keil_v5/ARM/CMSIS/Include-D__UVISION_VERSION="525" -DCMS32M55xx-o ./objects/user_fmc.o -MD)
+I (2_User\main.h)(0x65274A46)
+I (1_Device\cms32m5xxx.h)(0x630431DA)
+I (1_Device\core_cm0.h)(0x627370B9)
+I (C:\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x5AA6413A)
+I (1_Device\core_cmInstr.h)(0x625E2D81)
+I (1_Device\CMSIS_armcc_V6.h)(0x625E2D81)
+I (1_Device\core_cmFunc.h)(0x625E2D81)
+I (1_Device\system_cms32m5xxx.h)(0x625E2D81)
+I (2_User\code_config.h)(0x6502D083)
+I (C:\Keil_v5\ARM\ARMCLANG\include\stdlib.h)(0x5AA6413A)
+I (C:\Keil_v5\ARM\ARMCLANG\include\stdbool.h)(0x5AA6413A)
+I (3_driver\gpio.h)(0x63328BD3)
+I (3_driver\system.h)(0x63328BD3)
+I (3_driver\uart.h)(0x630431DA)
+I (3_driver\timer.h)(0x63328BD3)
+I (2_User\mcu_config.h)(0x63328C05)
+I (2_User\cm_handler.h)(0x65274A46)
+I (2_User\user_fmc.h)(0x630431DA)
+F (.\2_User\main.h)(0x65274A46)()
+F (.\2_User\mcu_config.h)(0x63328C05)()
+F (.\2_User\cm_handler.h)(0x65274A46)()
+F (.\2_User\user_fmc.h)(0x630431DA)()
+F (.\2_User\code_config.h)(0x6502D083)()
+F (.\1_Device\cms32m5xxx.h)(0x630431DA)()
+F (.\1_Device\CMSIS_armcc.h)(0x625E2D81)()
+F (.\1_Device\core_cm0.h)(0x627370B9)()
+F (.\1_Device\core_cmFunc.h)(0x625E2D81)()
+F (.\1_Device\core_cmInstr.h)(0x625E2D81)()
+F (.\1_Device\startup_cms32m5xxx.s)(0x625E2D81)(--cpu Cortex-M0 -g-I.\RTE\_CMS32M5536_Boot-IC:\Keil_v5\ARM\PACK\Cmsemicon\CMS32-Series\1.0.3\Device\CMS32M55xx\Include-IC:\Keil_v5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 525"--pd "CMS32M55xx SETA 1"--list .\listings\startup_cms32m5xxx.lst--xref -o .\objects\startup_cms32m5xxx.o--depend .\objects\startup_cms32m5xxx.d)
+F (.\1_Device\system_cms32m5xxx.c)(0x625E2D81)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0 -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-3 -Oz -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -I ./2_User -I ./1_Device -I ./3_driver -I ../ABS_Bootloader-I./RTE/_CMS32M5536_Boot-IC:/Keil_v5/ARM/PACK/Cmsemicon/CMS32-Series/1.0.3/Device/CMS32M55xx/Include-IC:/Keil_v5/ARM/CMSIS/Include-D__UVISION_VERSION="525" -DCMS32M55xx-o ./objects/system_cms32m5xxx.o -MD)
+I (1_Device\cms32m5xxx.h)(0x630431DA)
+I (1_Device\core_cm0.h)(0x627370B9)
+I (C:\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x5AA6413A)
+I (1_Device\core_cmInstr.h)(0x625E2D81)
+I (1_Device\CMSIS_armcc_V6.h)(0x625E2D81)
+I (1_Device\core_cmFunc.h)(0x625E2D81)
+I (1_Device\system_cms32m5xxx.h)(0x625E2D81)
+F (.\1_Device\system_cms32m5xxx.h)(0x625E2D81)()
+F (.\1_Device\cmsis_armcc_V6.h)(0x625E2D81)()
+F (.\3_driver\gpio.h)(0x63328BD3)()
+F (.\3_driver\system.h)(0x63328BD3)()
+F (.\3_driver\timer.h)(0x63328BD3)()
+F (.\3_driver\uart.h)(0x630431DA)()

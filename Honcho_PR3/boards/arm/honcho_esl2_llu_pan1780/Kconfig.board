@@ -1,0 +1,6 @@
+# Copyright (c) 2023 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+config BOARD_HONCHO_ESL2_LLU_PAN1780
+	bool "Honcho_ESL2_LLU_PAN1780"
+	depends on SOC_NRF52840_QIAA

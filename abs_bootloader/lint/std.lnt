@@ -1,0 +1,20 @@
+co-gcc.lnt      // Generic compiler options
+au-sbdk.lnt     // Linting options
+
+// Include files directory
+-i"C:\Bitbucket Repository\ABS_Bootloader\3_driver"
+-i"C:\Bitbucket Repository\ABS_Bootloader\2_User"
+-i"C:\Bitbucket Repository\ABS_Bootloader\1_Device"
+-i"C:\Keil_v5\ARM\ARMCC\include"
+-i"C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.3.0\CMSIS\Core_A\Include"
+-i..
+
+// PC Lint options
+//-vf
+//-passes(2)  // run at least two passes for cross-functional checks
+-hsfb^2     // (s) blank line after each msg, (f) add out of seq file info if useful, (b^) ^ indicator below, (3) 3 line msg
+//-limit(5) // Upper limit of n messages
+
+-summary()
+-e537 //ignore repeated include
+-e129

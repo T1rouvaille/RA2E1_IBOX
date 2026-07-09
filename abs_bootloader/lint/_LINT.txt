@@ -1,0 +1,14 @@
+
+--- Module:   C:\Bitbucket Repository\ABS_Bootloader\2_User\cm_handler.c (C)
+				FMC_Write_Array(Address->Val32, PAGE_SIZE >> 2U, buf);
+^C:\Bitbucket Repository\ABS_Bootloader\2_User\cm_handler.c  297  Info 772:
+    Symbol 'buf' (line 267) conceivably not initialized [SBDK Standard Rule
+    7.2]
+
+C:\Bitbucket Repository\ABS_Bootloader\2_User\cm_handler.c  267  Info 830:
+    Location cited in prior message
+
+
+Count   Type    Number  Text
+
+1       Info    772     Symbol '___' (___) conceivably not initialized

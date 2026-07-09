@@ -1,0 +1,407 @@
+// Copyright (c) 2023 Nordic Semiconductor ASA
+// SPDX-License-Identifier: Apache-2.0
+
+/dts-v1/;
+#include <nordic/nrf52840_qiaa.dtsi>
+#include "honcho_esl2_llu_pan1780-pinctrl.dtsi"
+
+/ {
+	model = "Honcho_ESL2_LLU_PAN1780";
+	compatible = "stanley-black-decker,honcho-esl2-llu-pan1780";
+
+	chosen {
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_partition;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		// Power_led: Power_led {
+		// 	gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;
+		// 	label = "Power LED red";
+		// };
+		Blue_led: Blue_led {
+			gpios = <&gpio0 8 GPIO_ACTIVE_LOW>;
+			label = "BLE LED blue";
+		};
+		Drop_led: Drop_led {
+			gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
+			label = "Drop LED";
+		};
+		soc1: soc1 {
+			gpios = <&gpio0 16 GPIO_ACTIVE_LOW>;
+			label = "Battery SOC 1";
+
+		};
+		soc2: soc2 {
+			gpios = <&gpio0 24 GPIO_ACTIVE_LOW>;
+			label = "Battery SOC 2";
+			
+		};
+		soc3: soc3 {
+			gpios = <&gpio0 23 GPIO_ACTIVE_LOW>;
+			label = "Battery SOC 3";
+			
+		};
+		Slope_led: Slope_led {
+			gpios = <&gpio1 07 GPIO_ACTIVE_LOW>;
+			label = "Pendulum Slope Indication LED";
+			
+		};
+		
+	};
+
+	interrupt {
+		compatible = "gpio-keys";
+		keypadint: keypadint {
+			gpios =  <&gpio0 20  (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+			label = "INT 1 from attiny";
+		};
+		v3p3detect: v3p3detect {
+			gpios =  <&gpio0 12  (GPIO_ACTIVE_HIGH)>;
+			label = "3.3v LDO detection";
+		};
+		yawfault: yawfault {
+			gpios = <&gpio0 21 (GPIO_ACTIVE_HIGH)>;
+			label = "Fault for yaw motor driver";
+		};
+		vertfault: vertfault {
+			gpios = <&gpio1 15 (GPIO_ACTIVE_HIGH)>;
+			label = "Fault for vertical motor driver";
+		};
+		pendulumlock: pendulumlock {
+			gpios = <&gpio0 4 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+			label = "Pendulum lock switch for slope LED";
+		};
+		
+	};
+
+	outputs {
+		compatible = "gpio-leds";
+		motor_dir: motor_dir  {
+			gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;		
+			label = "Vertical Motor Direction pin";
+		};
+		// motor_yaw_dir: motor_yaw_dir {
+		// 	gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;		
+		// 	label = "Yaw Motor Direction pin";
+		// };
+		motor_vertEN: motor_vertEN {
+			gpios = <&gpio1 12 GPIO_ACTIVE_HIGH>;
+			label = "Enable vertical motor driver";
+		};
+		motor_yawEN: motor_yawEN {
+			gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
+			label = "Enable Yaw motor driver";
+		};
+		motor_reset: motor_reset{
+			gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
+			label = "Motor driver reset pin";
+		};
+		Uart_TX: Uart_TX_28 {
+            gpios = <&gpio0 28 GPIO_ACTIVE_HIGH>;
+            label = "UART TX";
+        };
+       
+	};
+	
+	enables {
+		compatible = "gpio-keys";
+		Vbatpack_EN: Vbatpack_EN {
+			gpios =  <&gpio0 17 (GPIO_ACTIVE_HIGH)>;
+			label = "Battery enable for volatge measurement";
+		};
+		LaserBuck_EN: LaserBuck_EN {
+			gpios =  <&gpio0 25 (GPIO_ACTIVE_HIGH)>;
+			label = "Lasre buck converter Enable 8V";
+		};
+		MotorBuck_EN: MotorBuck_EN {
+			gpios =  <&gpio1 1 (GPIO_ACTIVE_HIGH)>;
+			label = "Motor Buck Convertor Enable 14V";
+		};
+		BattTH_EN: BattTH_EN {
+			gpios =  <&gpio0 3 (GPIO_ACTIVE_HIGH)>;
+			label = "Btthery Thermistor enable";
+		};
+		LaserLbias:LaserLbias {
+			gpios =  <&gpio1 4 (GPIO_ACTIVE_HIGH)>;
+			label = "Bias current enable for level laser";
+		};
+		LaserP1bias:LaserP1bias {
+			gpios =  <&gpio1 3 (GPIO_ACTIVE_HIGH)>;
+			label = "Bias current enable for plum 1 laser";
+		};
+		LaserP2bias:LaserP2bias {
+			gpios =  <&gpio0 19 (GPIO_ACTIVE_HIGH)>;
+			label = "Bias current enable for plum 2 laser";
+		};
+		Uart_RX: Uart_RX_29 {
+            gpios = <&gpio0 29 (GPIO_ACTIVE_HIGH)>;
+            label = "UART RX";
+        };
+		Laser_PS_ADC: Laser_PS_ADC{
+			gpios = <&gpio0 5 (GPIO_ACTIVE_HIGH)>;
+            label = "LASERPSASDC";
+		};
+		PACK_ID_EN: PACK_ID_EN{
+			gpios = <&gpio0 26 (GPIO_ACTIVE_HIGH)>;
+            label = "pack ID";
+		};
+		VBatt_coin_EN: Vbatt_coin_EN{
+			gpios = <&gpio0 27 (GPIO_ACTIVE_HIGH)>;
+            label = "coin adc en";
+		};
+		Laser_Current: Laser_Current{
+			gpios = <&gpio0 30 (GPIO_ACTIVE_HIGH)>;
+            label = "laser cuurent";
+		};
+		Vbatt_coin_adc: Vbatt_coin_adc{
+			gpios = <&gpio0 31 (GPIO_ACTIVE_HIGH)>;
+            label = "coin adc";
+		};
+		LDO_EN: LDO_EN{
+			gpios = <&gpio0 22 (GPIO_ACTIVE_HIGH)>;
+            label = "LDO enable";
+		};
+
+
+	};
+
+	pwm {
+		compatible = "pwm-leds";
+		plum1_pwm: plum1_pwm {
+			pwms = <&pwm0 0 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
+			label = "PWM control for plum1 laser";
+		};
+
+		plum2_pwm: plum2_pwm {
+			pwms = <&pwm1 0 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
+			label = "PWM control for plum2 laser";
+		};
+
+		level_pwm: level_pwm {
+			pwms = <&pwm2 0 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
+			label = "PWM control for level laser";
+		};
+		vert_motor_step: vert_motor_step {
+			pwms = <&pwm3 0 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
+			label = "PWM control for Vertical motor";
+		};
+		yaw_motor_step: yaw_motor_step {
+			pwms = <&pwm3 1 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
+			label = "PWM control for Yaw motor";
+		};
+
+	};
+
+	zephyr,user{
+		io-channels = <&adc 0>,<&adc 5>,<&adc 6>;
+	};
+
+	aliases {
+		keypadint 		= &keypadint;
+		battdetect	    = &v3p3detect;
+		pendlck			= &pendulumlock;
+		bleled	 		= &Blue_led;
+		dropled			= &Drop_led;
+		slopeled		= &Slope_led;
+		vbaten 			= &Vbatpack_EN;
+		battthen		= &BattTH_EN;
+		lbucken 		= &LaserBuck_EN;
+		mbucken 		= &MotorBuck_EN;
+		motordir 		= &motor_dir;
+		motorverten     = &motor_vertEN;
+		motoryawen      = &motor_yawEN;
+		lvlbias			= &LaserLbias;
+		plm1bias		= &LaserP1bias;
+		plm2bias		= &LaserP2bias;
+		motorrst		= &motor_reset;	
+		uarttx 			= &Uart_TX;				//Bitbang Datalog
+        uartrx 			= &Uart_RX;				//Bitbang Datalog
+		laserpsadc 		= &Laser_PS_ADC;
+		packiden		= &PACK_ID_EN;
+		vbatcoinen		= &VBatt_coin_EN;
+		lasercurrent	= &Laser_Current;
+		vbattcoinadc	= &Vbatt_coin_adc;
+		ldoen			= &LDO_EN;
+	};
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&spi1 {
+	status = "okay";
+	pinctrl-0 = <&spi1_default>;
+	pinctrl-1 = <&spi1_sleep>;
+	pinctrl-names = "default", "sleep";
+	cs-gpios = <&gpio0 7 GPIO_ACTIVE_LOW>;
+};
+
+&pwm0 {
+	status = "okay";
+	pinctrl-0 = <&pwm0_default>;
+	pinctrl-1 = <&pwm0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm1 {
+	status = "okay";
+	pinctrl-0 = <&pwm1_default>;
+	pinctrl-1 = <&pwm1_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm2 {
+	status = "okay";
+	pinctrl-0 = <&pwm2_default>;
+	pinctrl-1 = <&pwm2_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm3 {
+	status = "okay";
+	pinctrl-0 = <&pwm3_default>;
+	pinctrl-1 = <&pwm3_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+
+
+&adc {
+	status = "okay";
+};
+
+// &uart0 {
+// 	status = "okay";
+// 	compatible = "nordic,nrf-uarte";
+// 	current-speed = <115200>;
+// 	pinctrl-0 = <&uart0_default>;
+// 	pinctrl-1 = <&uart0_sleep>;
+// 	pinctrl-names = "default", "sleep";
+// };
+
+&uart1 {
+	compatible = "nordic,nrf-uarte";
+	current-speed = <38400>;					//9600 = ibox, 38400 = bootloader
+	status = "okay";
+	pinctrl-0 = <&uart1_default>;
+	pinctrl-1 = <&uart1_sleep>;
+	pinctrl-names = "default", "sleep";
+  };
+
+  &i2c0 {
+	status = "okay";
+	pinctrl-0 = <&i2c0_default>;
+	pinctrl-1 = <&i2c0_sleep>;
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+	pinctrl-names = "default", "sleep";
+
+  };
+
+//   &flash0 {
+// 	partitions {
+// 		compatible = "fixed-partitions";
+// 		#address-cells = <1>;
+// 		#size-cells = <1>;
+
+// 		boot_partition: partition@0 {
+// 			label = "mcuboot";
+// 			reg = <0x000000000 0x0000C000>;
+// 		};
+// 		slot0_partition: partition@c000 {
+// 			label = "image-0";
+// 			reg = <0x0000C000 0x00067000>;
+// 		};
+// 		slot1_partition: partition@73000 {
+// 			label = "image-1";
+// 			reg = <0x00073000 0x00067000>;
+// 		};
+// 		scratch_partition: partition@da000 {
+// 			label = "image-scratch";
+// 			reg = <0x000da000 0x00014000>;
+// 		};
+
+// 		/*
+// 		 * The flash starting at 0x000f8000 and ending at
+// 		 * 0x000fffff is reserved for use by the application.
+// 		 */
+
+// 		/*
+// 		 * Storage partition will be used by FCB/LittleFS/NVS
+// 		 * if enabled.
+// 		 */
+// 		datalog_partition: partition@EE000 {
+// 			label = "datalog";
+// 			reg = <0x000ee000 0x0006000>;
+// 		};
+// 		calibraion_parition: partition@f4000 {
+// 			label = "calib-variable";
+// 			reg = <0x000f4000 0x0002000>;
+// 		};
+// 		variable_partition: partition@f6000{
+// 			label = "flash-variable";
+// 			reg = <0x000f6000 0x0002000>;
+// 		};
+// 		storage_partition: partition@f8000 {
+// 			label = "storage";
+// 			reg = <0x000f8000 0x00008000>;
+// 		};
+// 	};
+// };
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x000000000 0x0000C000>;
+		};
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000c000 0x00072000>;
+		};
+		// slot1_partition: partition@7e000 {
+		// 	label = "image-1";
+		// 	reg = <0x7e000 0x72000>;
+		// };
+		// scratch_partition: partition@f0000 {
+		// 	label = "image-scratch";
+		// 	reg = <0xf0000 0xa000>;
+		// };
+		scratch_partition: partition@7e000 {
+			label = "image-scratch";
+			reg = <0x0007e000 0x00070000>;
+		};
+		datalog_partition: partition@ee000	{
+			label = "datalog-area";
+			reg = <0x000ee000 0x00006000>;
+		};
+		calibraion_parition: partition@f4000 {
+			label = "calib-area";
+			reg = <0x000f4000 0x00002000>;
+		};
+		variable_partition: partition@f6000{
+			label = "laserstatus-area";
+			reg = <0x000f6000 0x00002000>;
+		};
+		storage_partition: partition@f8000 {
+			label = "storage";
+			reg = <0x000f8000 0x00008000>;
+		};
+	};
+};
+
+&wdt0 {
+	compatible= "nordic,nrf-wdt";
+	status="okay";
+};

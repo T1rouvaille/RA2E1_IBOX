@@ -1,0 +1,11 @@
+--cpu Cortex-M0
+".\objects\main.o"
+".\objects\mcu_config.o"
+".\objects\cm_handler.o"
+".\objects\user_fmc.o"
+".\objects\startup_cms32m5xxx.o"
+".\objects\system_cms32m5xxx.o"
+--strict --scatter ".\Objects\ABS_Bootloader.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Listings\ABS_Bootloader.map" -o .\Objects\ABS_Bootloader.axf

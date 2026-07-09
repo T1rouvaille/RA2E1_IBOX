@@ -1,0 +1,436 @@
+// To get started, press Ctrl+Space to bring up the completion menu and view the available nodes.
+
+// You can also use the buttons in the sidebar to perform actions on nodes.
+// Actions currently available include:
+
+// * Enabling / disabling the node
+// * Adding the bus to a bus
+// * Removing the node
+// * Connecting ADC channels
+
+// For more help, browse the DeviceTree documentation at https://docs.zephyrproject.org/latest/guides/dts/index.html
+// You can also visit the nRF DeviceTree extension documentation at https://nrfconnect.github.io/vscode-nrf-connect/devicetree/nrfdevicetree.html
+// To get started, press Ctrl+Space to bring up the completion menu and view the available nodes.
+
+// You can also use the buttons in the sidebar to perform actions on nodes.
+// Actions currently available include:
+
+// * Enabling / disabling the node
+// * Adding the bus to a bus
+// * Removing the node
+// * Connecting ADC channels
+
+// For more help, browse the DeviceTree documentation at https://docs.zephyrproject.org/latest/guides/dts/index.html
+// You can also visit the nRF DeviceTree extension documentation at https://nrfconnect.github.io/vscode-nrf-connect/devicetree/nrfdevicetree.html
+/ {
+	chosen {
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_partition;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		// Power_led: Power_led {
+		// 	gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;
+		// 	label = "Power LED red";
+		// };
+		Blue_led: Blue_led {
+			gpios = <&gpio0 8 GPIO_ACTIVE_LOW>;
+			label = "BLE LED blue";
+		};
+		Drop_led: Drop_led {
+			gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
+			label = "Drop LED";
+		};
+		soc1: soc1 {
+			gpios = <&gpio0 16 GPIO_ACTIVE_LOW>;
+			label = "Battery SOC 1";
+
+		};
+		soc2: soc2 {
+			gpios = <&gpio0 24 GPIO_ACTIVE_LOW>;
+			label = "Battery SOC 2";
+			
+		};
+		soc3: soc3 {
+			gpios = <&gpio0 23 GPIO_ACTIVE_LOW>;
+			label = "Battery SOC 3";
+			
+		};
+		Slope_led: Slope_led {
+			gpios = <&gpio1 07 GPIO_ACTIVE_LOW>;
+			label = "Pendulum Slope Indication LED";
+			
+		};
+		
+	};
+
+	interrupt {
+		compatible = "gpio-keys";
+		keypadint: keypadint {
+			gpios =  <&gpio0 20  (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+			label = "INT 1 from attiny";
+		};
+		v3p3detect: v3p3detect {
+			gpios =  <&gpio0 12  (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+			label = "3.3v LDO detection";
+		};
+		yawfault: yawfault {
+			gpios = <&gpio0 21 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+			label = "Fault for yaw motor driver";
+		};
+		vertfault: vertfault {
+			gpios = <&gpio1 15 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+			label = "Fault for vertical motor driver";
+		};
+	};
+
+	outputs {
+		compatible = "gpio-leds";
+		motor_dir: motor_dir  {
+			gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;		
+			label = "Vertical Motor Direction pin";
+		};
+		// motor_yaw_dir: motor_yaw_dir {
+		// 	gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;		
+		// 	label = "Yaw Motor Direction pin";
+		// };
+		motor_vertEN: motor_vertEN {
+			gpios = <&gpio1 12 GPIO_ACTIVE_HIGH>;
+			label = "Enable vertical motor driver";
+		};
+		motor_yawEN: motor_yawEN {
+			gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
+			label = "Enable Yaw motor driver";
+		};
+		motor_reset: motor_reset{
+			gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
+			label = "Motor driver reset pin";
+		};
+		Uart_TX: Uart_TX_28 {
+            gpios = <&gpio0 28 GPIO_ACTIVE_HIGH>;
+            label = "UART TX";
+        };
+       
+	};
+	
+	enables {
+		compatible = "gpio-keys";
+		Vbatpack_EN: Vbatpack_EN {
+			gpios =  <&gpio0 17 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+			label = "Battery enable for volatge measurement";
+		};
+		LaserBuck_EN: LaserBuck_EN {
+			gpios =  <&gpio0 25 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+			label = "Lasre buck converter Enable 8V";
+		};
+		MotorBuck_EN: MotorBuck_EN {
+			gpios =  <&gpio1 1 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+			label = "Motor Buck Convertor Enable 14V";
+		};
+		LaserLbias:LaserLbias {
+			gpios =  <&gpio1 4 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+			label = "Bias current enable for level laser";
+		};
+		LaserP1bias:LaserP1bias {
+			gpios =  <&gpio1 3 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+			label = "Bias current enable for plum 1 laser";
+		};
+		LaserP2bias:LaserP2bias {
+			gpios =  <&gpio0 19 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+			label = "Bias current enable for plum 2 laser";
+		};
+		Uart_RX: Uart_RX_29 {
+            gpios = <&gpio0 29 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>;
+            label = "UART RX";
+        };
+
+	};
+
+	pwm {
+		compatible = "pwm-leds";
+		plum1_pwm: plum1_pwm {
+			pwms = <&pwm0 0 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
+			label = "PWM control for plum1 laser";
+		};
+
+		plum2_pwm: plum2_pwm {
+			pwms = <&pwm1 0 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
+			label = "PWM control for plum2 laser";
+		};
+
+		level_pwm: level_pwm {
+			pwms = <&pwm2 0 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
+			label = "PWM control for level laser";
+		};
+		vert_motor_step: vert_motor_step {
+			pwms = <&pwm3 0 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
+			label = "PWM control for Vertical motor";
+		};
+		yaw_motor_step: yaw_motor_step {
+			pwms = <&pwm3 1 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
+			label = "PWM control for Yaw motor";
+		};
+
+	};
+
+	zephyr,user{
+		io-channels = <&adc 0>, <&adc 4>, <&adc 5>, <&adc 7> ;
+	};
+
+	aliases {
+		keypadint 		= &keypadint;
+		bleled	 		= &Blue_led;
+		dropled			= &Drop_led;
+		slopeled		= &Slope_led;
+		vbaten 			= &Vbatpack_EN;
+		lbucken 		= &LaserBuck_EN;
+		mbucken 		= &MotorBuck_EN;
+		motordir 		= &motor_dir;
+		motorverten     = &motor_vertEN;
+		motoryawen      = &motor_yawEN;
+		lvlbias			= &LaserLbias;
+		plm1bias		= &LaserP1bias;
+		plm2bias		= &LaserP2bias;
+		motorrst		= &motor_reset;	
+		uarttx 			= &Uart_TX;				//Bitbang Datalog
+        uartrx 			= &Uart_RX;				//Bitbang Datalog
+	};
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&spi1 {
+	status = "okay";
+	pinctrl-0 = <&spi1_default>;
+	pinctrl-1 = <&spi1_sleep>;
+	pinctrl-names = "default", "sleep";
+	cs-gpios = <&gpio0 7 GPIO_ACTIVE_LOW>;
+};
+
+&pwm0 {
+	status = "okay";
+	pinctrl-0 = <&pwm0_default>;
+	pinctrl-1 = <&pwm0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm1 {
+	status = "okay";
+	pinctrl-0 = <&pwm1_default>;
+	pinctrl-1 = <&pwm1_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm2 {
+	status = "okay";
+	pinctrl-0 = <&pwm2_default>;
+	pinctrl-1 = <&pwm2_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm3 {
+	status = "okay";
+	pinctrl-0 = <&pwm3_default>;
+	pinctrl-1 = <&pwm3_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+
+
+&adc {
+	status = "okay";
+};
+
+// &uart0 {
+// 	status = "okay";
+// 	compatible = "nordic,nrf-uarte";
+// 	current-speed = <115200>;
+// 	pinctrl-0 = <&uart0_default>;
+// 	pinctrl-1 = <&uart0_sleep>;
+// 	pinctrl-names = "default", "sleep";
+// };
+
+&uart1 {
+	compatible = "nordic,nrf-uarte";
+	current-speed = <38400>;					//9600 = ibox, 38400 = bootloader
+	status = "okay";
+	pinctrl-0 = <&uart1_default>;
+	pinctrl-1 = <&uart1_sleep>;
+	pinctrl-names = "default", "sleep";
+  };
+
+  &i2c1 {
+	status = "okay";
+	pinctrl-0 = <&i2c1_default>;
+	pinctrl-1 = <&i2c1_sleep>;
+	pinctrl-names = "default", "sleep";
+
+  };
+  
+
+// &flash0 {
+// 	partitions {
+// 		compatible = "fixed-partitions";
+// 		#address-cells = <1>;
+// 		#size-cells = <1>;
+
+// 		boot_partition: partition@0 {
+// 			label = "mcuboot";
+// 			reg = <0x0 0xc000>;
+// 		};
+// 		slot0_partition: partition@c000 {
+// 			label = "image-0";
+// 			reg = <0xc000 0x72000>;
+// 		};
+// 		scratch_partition: partition@f0000 {
+// 			label = "image-scratch";
+// 			reg = <0xf0000 0x6000>;
+// 		};
+// 		calibraion_parition: partition@f6000 {
+// 			label = "calib-variable";
+// 			reg = <0xf6000 0x2000>;
+// 		};
+// 		variable_partition: partition@f8000{
+// 			label = "flash-variable";
+// 			reg = <0xf8000 0x2000>;
+// 		};
+// 		storage_partition: partition@fa000 {
+// 			label = "storage";
+// 			reg = <0xfa000 0x6000>;
+// 		};
+// 	};
+// };
+
+&pinctrl {
+	// uart0_default: uart0_default {
+	// 	group1 {
+	// 		psels = <NRF_PSEL(UART_TX, 0, 28)>,
+	// 				<NRF_PSEL(UART_RX, 0, 29)>;
+	// 	};
+	// };
+
+	// uart0_sleep: uart0_sleep {
+	// 	group1 {
+	// 		psels = <NRF_PSEL(UART_TX, 0, 28)>,
+	// 			<NRF_PSEL(UART_RX, 0, 29)>;
+	// 		low-power-enable;
+	// 	};
+	// };
+
+	spi1_default: spi1_default {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 15)>,
+				<NRF_PSEL(SPIM_MISO, 0, 6)>,
+				<NRF_PSEL(SPIM_MOSI, 0,14)>;
+		};
+	};
+
+	spi1_sleep: spi1_sleep {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 15)>,
+				<NRF_PSEL(SPIM_MISO, 0, 6)>,
+				<NRF_PSEL(SPIM_MOSI, 0, 14)>;
+			low-power-enable;
+		};
+	};
+
+	uart1_default: uart1_default {
+		group1 {
+			psels = <NRF_PSEL(UART_RX, 1, 14)>;		////test point P1.14, th P0.29  AN5
+			bias-pull-up;
+		};
+		group2 {
+			psels = <NRF_PSEL(UART_TX, 1, 4)>;		//test point P1.04, SBD C3 P0.28 AN4
+		};
+	};
+	
+	uart1_sleep: uart1_sleep {
+		group1 {
+			psels = <NRF_PSEL(UART_RX, 1, 14)>,
+				<NRF_PSEL(UART_TX, 1, 4)>;
+			low-power-enable;
+		};
+	};
+
+	i2c1_default: i2c1_default {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 8)>,
+				<NRF_PSEL(TWIM_SCL, 0, 6)>;
+		};
+	};
+
+	i2c1_sleep: i2c1_sleep {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 8)>,
+				<NRF_PSEL(TWIM_SCL, 0, 6)>;
+			low-power-enable;
+		};
+	};
+	
+	pwm0_default: pwm0_default {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 9)>;
+			nordic,invert;
+		};
+	};
+
+	pwm0_sleep: pwm0_sleep {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 9)>;
+			low-power-enable;
+		};
+	};
+	pwm1_default: pwm1_default {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 13)>;
+			nordic,invert;
+		};
+	};
+
+	pwm1_sleep: pwm1_sleep {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 13)>;
+			low-power-enable;
+		};
+	};
+
+	pwm2_default: pwm2_default {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 8)>;
+			nordic,invert;
+		};
+	};
+
+	pwm2_sleep: pwm2_sleep {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 8)>;
+			low-power-enable;
+		};
+	};
+
+	pwm3_default: pwm3_default {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 6)>,
+					<NRF_PSEL(PWM_OUT1, 1, 2)>;
+			nordic,invert;
+		};
+	};
+
+	pwm3_sleep: pwm3_sleep {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 6)>,
+					<NRF_PSEL(PWM_OUT1, 1, 2)>;
+			low-power-enable;
+		};
+	};
+	
+
+};

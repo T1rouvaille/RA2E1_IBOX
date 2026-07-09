@@ -1,0 +1,12 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "nrf-connect",
+			"request": "launch",
+			"name": "Launch Honcho_PR3\\build",
+			"config": "c:/Users/KXJ0816/Desktop/Kavya/Projects/honcho_rc_laser/Honcho_PR3/build",
+			"runToEntryPoint": "main"
+		}
+	]
+}
