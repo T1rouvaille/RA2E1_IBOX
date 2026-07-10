@@ -51,7 +51,7 @@
 #define FMC_BANK1_END_ADRESS            (FMC_BANK1_START_ADRESS + FEE_SIZE - 4)
 
 /* Communication baud rates */
-#define UART_BAUD_FAST                  38400U
+#define UART_BAUD_FAST                  115200U
 #define UART_BAUD_SLOW                  9600U
 
 /* ================================================================== */
@@ -96,8 +96,8 @@
 #define UCID_ADDRESS            0x01001C00U
 
 /* Special address offsets for version/calibration requests (Honcho protocol) */
-#define VERSION_REQUEST_OFFSET      0xFFFFU
-#define CALIBRATION_REQUEST_OFFSET  0xFFFEU
+#define VERSION_REQUEST_OFFSET      0x0000FFFFU
+#define CALIBRATION_REQUEST_OFFSET  0x0000FFFEU
 
 typedef enum e_enable_disable
 {

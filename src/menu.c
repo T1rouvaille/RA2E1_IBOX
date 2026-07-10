@@ -86,7 +86,6 @@ static void cmd_read_eeprom(void);
 static void cmd_load_eeprom(void);
 static void cmd_read_flash(void);
 static void cmd_read_version_info(void);
-static void cmd_calibration(void);
 static void cmd_load_flash(void);
 static void cmd_set_address(void);
 static void cmd_change_baud(void);
@@ -237,30 +236,39 @@ static void cmd_identify(void)
  */
 static void cmd_set_address(void)
 {
-    uint8_t ah, al;
-
-    /* 1) 先回显 'D' — 上位机等待此回显后才发地址字节 */
+    uReg32 addr;
+    /* 1) 先回显 'D' */
     {
         uint8_t echo = COMMAND_SET_ADDRESS;
         comms_send(&echo, 1U);
     }
 
-    /* 2) 接收 2 字节地址 */
-    if (recv_byte(&ah) != FSP_SUCCESS) { send_nak(); return; }
-    if (recv_byte(&al) != FSP_SUCCESS) { send_nak(); return; }
+    /* 对齐 CMS32M67: 高字节/低字节清零 */
 
+
+
+    /* 2) 接收 2 字节 (存入 Val[2]/Val[1], 对齐 CMS32M67) */
+    if (recv_byte(&addr.Val[2]) != FSP_SUCCESS) { send_nak(); return; }
+    if (recv_byte(&addr.Val[1]) != FSP_SUCCESS) { send_nak(); return; }
+
+
+    /* 4) 发 ETX */
     uint8_t etx = ETX;
     comms_send(&etx, 1U);
 
-    g_addr_high = ah;
-    g_addr_low  = al;
-    g_target_offset = ((uint32_t)ah << 8U) | (uint32_t)al;
-    g_target_addr   = g_target_offset;  // 绝对地址
-
-/*     3) 发 ETX
+    addr.Val[3] = 0U;
+    addr.Val[0] = 0U;
+    /* 3) 非特殊地址 (0xFFFF/0xFFFE) → 左移 1 位 */
+    if (!(((addr.Val[2] == 0xFFU) && (addr.Val[1] == 0xFFU)) ||
+          ((addr.Val[2] == 0xFFU) && (addr.Val[1] == 0xFEU))))
     {
+        addr.Val32 <<= 1U;
+    }
 
-    }*/
+    g_addr_high = addr.Val[2];
+    g_addr_low  = addr.Val[1];
+    g_target_offset = ((uint32_t)addr.Val[2] << 8U) | (uint32_t)addr.Val[1];
+    g_target_addr   = addr.Val32;
 }
 
 /*
@@ -283,8 +291,31 @@ static void cmd_read_flash(void)
     }
     else if (g_target_offset == CALIBRATION_REQUEST_OFFSET)
     {
-        /* addr = 0xFFFE → 校准响应 */
-        cmd_calibration();
+        /* addr = 0xFFFE → 校准, 每次进入翻转 LED2/LED3 */
+        static bool cal_led_on = false;
+
+        if (cal_led_on)
+        {
+            LED2_OFF; LED3_OFF;
+            cal_led_on = false;
+        }
+        else
+        {
+            LED2_ON; LED3_ON;
+            cal_led_on = true;
+        }
+
+        /* 发送校准响应: 'N' + 0x00 + 0x01 + 0x01 + ETX */
+        {
+            uint8_t cal_rsp[5];
+            cal_rsp[0] = COMMAND_READ_FLASH;
+            cal_rsp[1] = 0x00U;
+            cal_rsp[2] = 0x01U;
+            cal_rsp[3] = 0x01U;
+            cal_rsp[4] = ETX;
+            comms_send(cal_rsp, sizeof(cal_rsp));
+        }
+
         g_target_offset = 0U;
         g_target_addr =  0x00000000;
     }
@@ -294,8 +325,7 @@ static void cmd_read_flash(void)
         static uint8_t rsp[PAGE_SIZE + 4];
         uint16_t i;
 
-        /* LED 指示: 读 Flash 期间点亮 */
-        LED1_ON; LED2_ON; LED3_ON;
+
 
         rsp[0] = COMMAND_READ_FLASH;
         rsp[1] = (uint8_t)(PAGE_SIZE >> 8U);
@@ -310,8 +340,6 @@ static void cmd_read_flash(void)
         rsp[3U + PAGE_SIZE] = ETX;
 
         comms_send(rsp, sizeof(rsp));
-
-        /* 成功: LED 保持点亮 */
 
         g_target_offset = 0U;
         g_target_addr =  0x00000000;
@@ -415,17 +443,6 @@ static void cmd_read_version_info(void)
  *
  * RA2E1 bootloader: 发送校准占位响应 (不执行激光校准)
  */
-static void cmd_calibration(void)
-{
-    uint8_t rsp[5];
-    rsp[0] = COMMAND_READ_FLASH;
-    rsp[1] = 0x00U;
-    rsp[2] = 0x01U;
-    rsp[3] = 0x01U;
-    rsp[4] = ETX;
-    comms_send(rsp, sizeof(rsp));
-}
-
 /*
  * 'F' READ_EEPROM — Honcho PR3 format
  *
@@ -435,7 +452,7 @@ static void cmd_calibration(void)
  */
 static void cmd_read_eeprom(void)
 {
-    if (g_addr_high == 0xFFU && g_addr_low == 0xFFU)
+    if (g_target_offset == VERSION_REQUEST_OFFSET)
     {
         /* addr = 0xFFFF → 发送 EEPROM (FEE) 数据 */
         uint8_t rsp[FEE_SIZE + 4];
@@ -576,25 +593,29 @@ static void cmd_load_flash(void)
     /* Validate address range */
     if (!addr_in_app_range(g_target_addr, n))
     {
-        send_nak();
+        //send_nak();
+        uint16_t checksum_error = checksum16(buf, n);
+        uint8_t rsp[3];
+        //rsp[0] = COMMAND_LOAD_FLASH;
+/*        rsp[1] = 0x00U;
+        rsp[2] = 0x02U;*/
+        rsp[0] = (uint8_t)(checksum_error >> 8U);
+        rsp[1] = (uint8_t)(checksum_error & 0xFFU);
+        rsp[2] = ETX;
+        comms_send(rsp, 3U);
         return;
     }
 
-    /* LED2 指示: 烧录 Flash 期间点亮 */
-    LED2_ON;
-
     /* Erase 2KB block if entering new block */
     err = erase_block_if_needed(g_target_addr);
-    if (err != FSP_SUCCESS) { LED2_OFF; send_nak(); return; }
+    if (err != FSP_SUCCESS) { send_nak(); return; }
 
     /* Write page to flash */
     ThreadsAndInterrupts(DISABLE);
     err = g_flash0.p_api->write(g_flash0.p_ctrl, (uint32_t)buf, g_target_addr, n);
     ThreadsAndInterrupts(RE_ENABLE);
 
-    if (err != FSP_SUCCESS) { LED2_OFF; send_nak(); return; }
-
-    /* 成功: LED2 保持点亮 */
+    if (err != FSP_SUCCESS) { send_nak(); return; }
 
     g_target_addr += n;
 
@@ -850,7 +871,7 @@ static uint16_t checksum16(const uint8_t *buf, uint16_t len)
 static bool addr_in_app_range(uint32_t addr, uint32_t len)
 {
     if (addr < APP_IMAGE_START_ADDRESS)              return false;
-    if ((addr + len) > (APP_IMAGE_END_ADDRESS - 8U)) return false;
+    if ((addr + len) > (0x0001FF00)) return false;
     return true;
 }
 
