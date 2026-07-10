@@ -59,10 +59,10 @@ def parse_hex(filepath):
 # UART 通讯函数
 # ============================================================
 def set_address(ser, addr):
-    """D 命令: 设地址 (一次性发送 D + 偏移量)"""
+    """D 命令: 设地址 (对齐 CMS32M67: 2 字节, Val[2]/Val[1] 布局, MCU <<1)"""
     ser.write(b'\x44')
-    offset = addr - APP_START
-    ser.write(bytes([(offset >> 8) & 0xFF, offset & 0xFF]))
+    hw = addr >> 9
+    ser.write(bytes([(hw >> 8) & 0xFF, hw & 0xFF]))
     ser.read(2)  # 读 44 03
 
 def write_page(ser, data):

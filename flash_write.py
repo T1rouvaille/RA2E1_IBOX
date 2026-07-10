@@ -42,11 +42,13 @@ def main():
         # ---- 2a. SET_ADDRESS 'D' ----
         print()
         print("=" * 60)
-        print(f"【步骤 2a】设地址 — 第{page+1}页, 偏移 0x{offset:04X} (绝对地址 0x{0x4000+offset:08X})")
+        abs_addr = 0x4000 + offset
+        print(f"【步骤 2a】设地址 — 第{page+1}页, 偏移 0x{offset:04X} (绝对地址 0x{abs_addr:08X})")
         print("=" * 60)
-        addr_bytes = bytes([(offset >> 8) & 0xFF, offset & 0xFF])
+        hw = abs_addr >> 9
+        addr_bytes = bytes([(hw >> 8) & 0xFF, hw & 0xFF])
         ser.write(b'\x44' + addr_bytes)
-        print(f"  PC → MCU:  44 {tx_hex(addr_bytes)}                   ('D' + 地址 = 0x{offset:04X})")
+        print(f"  PC → MCU:  44 {tx_hex(addr_bytes)}                   ('D' + hw=0x{hw:04X} → addr=0x{abs_addr:08X}, CMS32M67布局)")
         r = ser.read(2)
         print(f"  MCU → PC:  {tx_hex(r)}                      (44 03 确认)")
 
@@ -83,7 +85,7 @@ def main():
         # 设地址
         ser.write(b'\x44' + addr_bytes)
         ser.read(2)
-        print(f"  PC → MCU:  D + 地址 0x{offset:04X}        (重新设地址)")
+        print(f"  PC → MCU:  D + 绝对地址 0x{abs_addr:08X}  (重新设地址)")
 
         # 读 Flash
         ser.write(b'\x4E')
